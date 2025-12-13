@@ -1,0 +1,21 @@
+.home-button {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    top: 7rem;
+    left: 1rem;
+    z-index: 10;
+}
+
+.home-button > img{
+    width: 40px;
+    height: 40px;
+}

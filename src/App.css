@@ -1,0 +1,59 @@
+.app-container {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  z-index: 5;
+}
+
+.welcome-container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+
+.welcome-text, .encrypted-text {
+  font-size: 2rem;
+  color: #7df9ff; /* Bright cyan color */
+  font-family: 'Press Start 2P', 'Courier New', Courier, monospace;
+  margin-bottom: 100px;
+  text-align: center;
+  padding: 20px;
+  /* background-color: rgba(0, 0, 0, 0.7); */
+  border-radius: 10px;
+  max-width: 80%;
+  text-shadow: 0 0 10px rgba(125, 249, 255, 0.7);
+}
+
+.card-container {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  gap: 44px;
+  z-index: 15;
+}
+
+@media (max-width: 768px) {
+  .welcome-text {
+    font-size: 1.2rem;
+  }
+}
