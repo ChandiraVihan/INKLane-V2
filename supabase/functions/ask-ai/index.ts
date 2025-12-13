@@ -1,22 +1,35 @@
+// supabase/functions/ask-ai/index.ts
+
 import { serve } from "https://deno.land/std/http/server.ts";
 
-// Define the expected request body structure for type safety
 interface RequestBody {
   message: string;
 }
 
-// Define CORS headers. These are crucial for allowing your frontend to call this function.
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // Allows any origin. For production, you might want to restrict this to your app's URL.
-  'Access-Control-Allow-Methods': 'POST, OPTIONS', // Specify allowed methods
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', // Important for Supabase client
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 serve(async (req: Request) => {
-  // This is the crucial step to handle CORS preflight requests.
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
+
+  // --- START: SECURITY MODIFICATION ---
+  // 1. Get the function secret from environment variables
+  const FUNCTION_SECRET = Deno.env.get("FUNCTION_SECRET");
+
+  // 2. Check for the Authorization header
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader || authHeader !== `Bearer ${FUNCTION_SECRET}`) {
+    return new Response(
+      JSON.stringify({ error: "Unauthorized" }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+  // --- END: SECURITY MODIFICATION ---
 
   try {
     const { message }: RequestBody = await req.json();
@@ -24,7 +37,6 @@ serve(async (req: Request) => {
     if (!message) {
       return new Response(
         JSON.stringify({ error: "Message is required" }),
-        // Add CORS headers to the response
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -34,7 +46,6 @@ serve(async (req: Request) => {
     if (!apiKey) {
       return new Response(
         JSON.stringify({ error: "GROQ_API_KEY environment variable is not set" }),
-        // Add CORS headers to the response
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -53,10 +64,8 @@ serve(async (req: Request) => {
 
     if (!response.ok) {
         const errorData = await response.json();
-        console.error("Groq API Error:", errorData);
         return new Response(
             JSON.stringify({ error: errorData.error.message || "An error occurred with the Groq API." }),
-            // Add CORS headers to the response
             { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
     }
@@ -65,7 +74,6 @@ serve(async (req: Request) => {
 
     return new Response(
       JSON.stringify({ reply: data.choices[0].message.content }),
-      // Add CORS headers to the successful response
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
@@ -73,7 +81,6 @@ serve(async (req: Request) => {
     const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      // Add CORS headers to the catch block response
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
