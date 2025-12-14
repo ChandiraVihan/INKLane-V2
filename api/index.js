@@ -2,11 +2,11 @@
 
 app.post('/api/ask-ai', async (req, res) => {
   try {
-    // 1. We now expect an array called 'history' instead of a 'message' string.
+    // 1. We now expect an array called 'history'
     const { history } = req.body;
     console.log("Received conversation history:", history);
 
-    // 2. Update validation to check for a non-empty array.
+    // 2. Update validation to check for a non-empty array
     if (!history || !Array.isArray(history) || history.length === 0) {
       return res.status(400).json({ error: "Conversation history is required." });
     }
@@ -24,8 +24,8 @@ app.post('/api/ask-ai', async (req, res) => {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        // 3. Pass the entire history array to the AI.
-        messages: history 
+        // 3. Pass the entire history array to the AI
+        messages: history
       })
     });
 
