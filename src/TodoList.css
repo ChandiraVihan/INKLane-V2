@@ -1,0 +1,13 @@
+/* In src/TodoList.css */
+.todo-container {
+  max-width: 600px; margin: 2rem auto; padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.1); border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
+}
+.todo-form { display: flex; gap: 10px; margin-bottom: 20px; }
+.todo-form input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+.todo-form button { padding: 10px 20px; border-radius: 8px; border: none; background-color: #7a42f4; color: white; cursor: pointer; }
+.todo-list { list-style: none; padding: 0; }
+.todo-list li { display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+.todo-list li.finished span { text-decoration: line-through; color: #aaa; }
+.delete-btn { background: #e74c3c; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
