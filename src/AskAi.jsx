@@ -69,29 +69,30 @@ const AskAi = () => {
     <div>
       <Header />
       <Link to="/"><Home /></Link>
+<div className="ai-container">
+  <Greeting />
 
-      <div className="ai-container">
-        <Greeting /> {/* This line will now work correctly */}
-
-        <div className="chat-history">
-          {conversation.map((message, index) => (
-            <div key={index} className={`message ${message.role}`}>
-              <ReactMarkdown>{message.content}</ReactMarkdown>
-            </div>
-          ))}
-        </div>
-
-        <input
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && askAi()}
-          placeholder="Ask something..."
-        />
-        <button onClick={askAi} disabled={loading || !question}>
-          {loading ? "Thinking..." : "Ask"}
-        </button>
+  <div className="chat-history">
+    {conversation.map((message, index) => (
+      <div key={index} className={`message ${message.role}`}>
+        <ReactMarkdown>{message.content}</ReactMarkdown>
       </div>
-    </div>
+    ))}
+  </div>
+
+  <div className="input-group">
+    <input
+      value={question}
+      onChange={(e) => setQuestion(e.target.value)}
+      onKeyPress={(e) => e.key === 'Enter' && askAi()}
+      placeholder="Ask something..."
+    />
+    <button onClick={askAi} disabled={loading || !question}>
+      {loading ? "Thinking..." : "Ask"}
+    </button>
+  </div>
+</div>
+</div>
   );
 };
 

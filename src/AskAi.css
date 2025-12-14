@@ -13,15 +13,25 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.input-group {
+  display: flex;
+  width: 90%;          
+  align-items: center;
+  justify-content: center;
+  gap: 10px;           /* Adds space between the input and the button */
+  margin-top: 10px;
+}
+
 .ai-container input {
-  width: 80%;
+  flex: 1;             /* This allows the input to take up all available space */
+  max-width: 80%;      
   padding: 12px 20px;
-  margin: 20px 0;
+  margin: 0;           
   border: 1px solid #ccc;
-  border-radius: 25px; /* Rounded corners */
+  border-radius: 25px;
   background-color: #f1f1f1;
   font-size: 16px;
-  color: #333; /* Dark text for readability */
+  color: #333;
 }
 
 .ai-container input:focus {
@@ -42,7 +52,7 @@
 }
 
 .ai-container button:hover {
-  background-color: #5a2ab4; /* A darker purple on hover */
+  background-color: #5a2ab4; 
 }
 
 .ai-container button:disabled {
@@ -53,21 +63,18 @@
 .ai-reply {
   margin-top: 30px;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.2); /* Darker transparent background */
+  background-color: rgba(0, 0, 0, 0.2); 
   border-radius: 10px;
-  text-align: left; /* Left-align the text for readability */
-  line-height: 1.6; /* Improve spacing between lines */
+  text-align: left; 
+  line-height: 1.6;
   white-space: pre-wrap; /* This helps preserve line breaks from the AI */
 }
 
-/* You can even style the bolded text specifically */
+
 .ai-reply strong {
   color: #c9a7ff; /* A lighter purple for emphasis */
 }
 
-/* In AskAi.css, ADD THE FOLLOWING STYLES AT THE END OF THE FILE */
-
-/* In AskAi.css, replace the old .chat-history style with this one */
 
 .chat-history {
   width: 100%;
@@ -84,7 +91,6 @@
   transition: all 0.3s ease;
 }
 
-/* In AskAi.css, add this new style at the end */
 
 /* This style applies ONLY when the chat has messages. */
 .chat-history:has(.message) {
@@ -102,15 +108,15 @@
   white-space: pre-wrap; /* Preserve line breaks from the AI */
 }
 
-/* For AI messages, we will reuse your .ai-reply style! */
+
 .message.assistant {
   background-color: rgba(0, 0, 0, 0.2);
   align-self: flex-start; /* Align to the left */
 }
 
-/* We need a new style for the user's messages */
+
 .message.user {
-  background-color: #7d9bff ; /* Use your existing button color */
-  align-self: flex-end; /* Align to the right */
+  background-color: #7d9bff ; 
+  align-self: flex-end; 
   color: white;
 }
