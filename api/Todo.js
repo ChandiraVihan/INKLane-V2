@@ -1,4 +1,3 @@
-// In api/models/Todo.js
 import mongoose from 'mongoose';
 
 const todoSchema = new mongoose.Schema({

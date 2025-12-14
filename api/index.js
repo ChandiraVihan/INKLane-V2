@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import 'dotenv/config';
+import Todo from './models/Todo.js';
 
 // 1. Initialize the Express App
 const app = express();
@@ -55,6 +56,50 @@ app.post('/api/ask-ai', async (req, res) => {
   } catch (err) {
     console.error("Function Error:", err);
     res.status(500).json({ error: "An unknown server error occurred." });
+  }
+});
+
+app.get('/api/todos', async (req, res) => {
+  try {
+    const todos = await Todo.find({});
+    res.json(todos);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch todos." });
+  }
+});
+
+// POST: Create a new to-do item
+app.post('/api/todos', async (req, res) => {
+  try {
+    const { goal } = req.body;
+    const newTodo = new Todo({ goal });
+    await newTodo.save();
+    res.status(201).json(newTodo);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create todo." });
+  }
+});
+
+// PUT: Update a to-do item (e.g., mark as finished)
+app.put('/api/todos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isFinished } = req.body;
+    const updatedTodo = await Todo.findByIdAndUpdate(id, { isFinished }, { new: true });
+    res.json(updatedTodo);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update todo." });
+  }
+});
+
+// DELETE: Remove a to-do item
+app.delete('/api/todos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Todo.findByIdAndDelete(id);
+    res.json({ message: "Todo deleted successfully." });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete todo." });
   }
 });
 
