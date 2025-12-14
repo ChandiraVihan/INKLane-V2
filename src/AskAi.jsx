@@ -5,28 +5,43 @@ import Home from './Home';
 import './AskAi.css';
 import ReactMarkdown from 'react-markdown';
 
+const Greeting = () => {
+  const [greeting, setGreeting] = useState('');
+
+  useEffect(() => {
+    const updateGreeting = () => {
+      const currentHour = new Date().getHours();
+      if (currentHour >= 5 && currentHour < 12) setGreeting('Good Morning, What can I do for you today?');
+      else if (currentHour >= 12 && currentHour < 18) setGreeting('Good Afternoon, What can I do for you today?');
+      else setGreeting('Good Evening, What can I do for you today?');
+    };
+
+    updateGreeting();
+    const intervalId = setInterval(updateGreeting, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return <h1>{greeting}</h1>;
+};
+
+
+
 const AskAi = () => {
-  // --- STATE CHANGES ---
   const [question, setQuestion] = useState("");
-  // We no longer need `reply`. Instead, we store the whole conversation.
   const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // --- LOGIC CHANGES ---
   const askAi = async () => {
     if (!question.trim()) return;
     setLoading(true);
 
     const userMessage = { role: 'user', content: question };
-    // Create the new history to be sent to the API
     const newHistory = [...conversation, userMessage];
 
-    // Immediately add the user's question to the chat display
     setConversation(newHistory);
-    setQuestion(""); // Clear the input box
+    setQuestion("");
 
     try {
-      // The fetch call now sends the 'history' object
       const response = await fetch("/api/ask-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,36 +49,30 @@ const AskAi = () => {
       });
 
       const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong on the server.");
+        throw new Error(data.error || "Something went wrong.");
       }
-
+      
       const assistantMessage = { role: 'assistant', content: data.reply };
-      // Add the AI's response to the conversation
       setConversation([...newHistory, assistantMessage]);
 
     } catch (error) {
       console.error("Failed to ask AI:", error);
       const errorMessage = { role: 'assistant', content: `Error: ${error.message}` };
-      // Add the error message to the conversation
       setConversation([...newHistory, errorMessage]);
     }
 
     setLoading(false);
   };
 
-  // --- JSX / RENDER CHANGES ---
   return (
     <div>
       <Header />
-      <Link to="/">
-        <Home />
-      </Link>
-      <div className="ai-container">
-        <Greeting />
+      <Link to="/"><Home /></Link>
 
-        {/* This is the new chat history display area */}
+      <div className="ai-container">
+        <Greeting /> {/* This line will now work correctly */}
+
         <div className="chat-history">
           {conversation.map((message, index) => (
             <div key={index} className={`message ${message.role}`}>
@@ -75,7 +84,7 @@ const AskAi = () => {
         <input
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && askAi()} // Allows pressing Enter to send
+          onKeyPress={(e) => e.key === 'Enter' && askAi()}
           placeholder="Ask something..."
         />
         <button onClick={askAi} disabled={loading || !question}>
