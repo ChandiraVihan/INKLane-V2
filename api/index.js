@@ -1,33 +1,14 @@
-
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import 'dotenv/config'; // Use this for ES Modules
-
-const app = express();
-const PORT = 3001;
-
-// --- MIDDLEWARE ---
-app.use(cors());
-app.use(express.json());
-
-// --- DATABASE CONNECTION ---
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Successfully connected to MongoDB Atlas!'))
-  .catch(err => console.error('Error connecting to MongoDB Atlas:', err));
-
-// --- API ROUTES ---
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Hello from your new Express server!' });
-});
+// In api/index.js
 
 app.post('/api/ask-ai', async (req, res) => {
   try {
-    const { message } = req.body;
-    console.log("Received message for AI:", message);
+    // 1. We now expect an array called 'history' instead of a 'message' string.
+    const { history } = req.body;
+    console.log("Received conversation history:", history);
 
-    if (!message) {
-      return res.status(400).json({ error: "Message is required" });
+    // 2. Update validation to check for a non-empty array.
+    if (!history || !Array.isArray(history) || history.length === 0) {
+      return res.status(400).json({ error: "Conversation history is required." });
     }
 
     const groqApiKey = process.env.GROQ_API_KEY;
@@ -43,14 +24,16 @@ app.post('/api/ask-ai', async (req, res) => {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: message }]
+        // 3. Pass the entire history array to the AI.
+        messages: history 
       })
     });
 
     if (!response.ok) {
         const errorData = await response.json();
         console.error("Groq API Error:", errorData);
-        return res.status(response.status).json({ error: "An error occurred with the Groq API." });
+        const errorMessage = errorData?.error?.message || "An error occurred with the Groq API.";
+        return res.status(response.status).json({ error: errorMessage });
     }
 
     const data = await response.json();
@@ -62,8 +45,4 @@ app.post('/api/ask-ai', async (req, res) => {
     console.error("Function Error:", err);
     res.status(500).json({ error: "An unknown server error occurred." });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Express server is running on http://localhost:${PORT}`);
 });
