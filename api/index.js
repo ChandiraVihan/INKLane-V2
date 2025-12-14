@@ -102,7 +102,7 @@ app.get('/api/test', (req, res) => {
 
 app.post('/api/ask-ai', async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message } = req.body;S
     console.log("Received message for AI:", message);
 
     if (!message) {
@@ -121,7 +121,7 @@ app.post('/api/ask-ai', async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama-3.1-70b-instruct",
+        model: "llama-3.3-70b-versatile",
         messages: [{ role: "user", content: message }]
       })
     });

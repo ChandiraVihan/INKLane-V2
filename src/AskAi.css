@@ -12,3 +12,55 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.ai-container input {
+  width: 80%;
+  padding: 12px 20px;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 25px; /* Rounded corners */
+  background-color: #f1f1f1;
+  font-size: 16px;
+  color: #333; /* Dark text for readability */
+}
+
+.ai-container input:focus {
+  outline: none;
+  border-color: #7a42f4; /* Highlight color on focus */
+  box-shadow: 0 0 5px rgba(122, 66, 244, 0.5);
+}
+
+.ai-container button {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 25px;
+  background-color: #7a42f4; /* A nice purple */
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.ai-container button:hover {
+  background-color: #5a2ab4; /* A darker purple on hover */
+}
+
+.ai-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.ai-reply {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.2); /* Darker transparent background */
+  border-radius: 10px;
+  text-align: left; /* Left-align the text for readability */
+  line-height: 1.6; /* Improve spacing between lines */
+  white-space: pre-wrap; /* This helps preserve line breaks from the AI */
+}
+
+/* You can even style the bolded text specifically */
+.ai-reply strong {
+  color: #c9a7ff; /* A lighter purple for emphasis */
+}

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Home from './Home';
 import './AskAi.css';
+import ReactMarkdown from 'react-markdown';
 
 // --- CHANGE 1: REMOVE THE SUPABASE IMPORT ---
 // import { supabase } from "./supabaseClient"; // This line is no longer needed.
@@ -87,7 +88,9 @@ const AskAi = () => {
         <button onClick={askAi} disabled={loading || !question}>
           {loading ? "Thinking..." : "Ask"}
         </button>
-        {reply && <p>{reply}</p>}
+        {/* --- THIS IS THE CHANGE --- */}
+        {/* 2. USE THE COMPONENT TO RENDER THE REPLY */}
+        {reply && <div className="ai-reply"><ReactMarkdown>{reply}</ReactMarkdown></div>}
       </div>
     </div>
   );
