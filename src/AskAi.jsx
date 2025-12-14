@@ -1,77 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { Link } from 'react-router-dom';
-import Header from './Header';
-import Home from './Home';
-import './AskAi.css';
-import ReactMarkdown from 'react-markdown';
-
-// --- CHANGE 1: REMOVE THE SUPABASE IMPORT ---
-// import { supabase } from "./supabaseClient"; // This line is no longer needed.
-
-// The Greeting component is perfect and does not need any changes.
-const Greeting = () => {
-  const [greeting, setGreeting] = useState('');
-
-  useEffect(() => {
-    const updateGreeting = () => {
-      const currentHour = new Date().getHours();
-      if (currentHour >= 5 && currentHour < 12) setGreeting('Good Morning, What can I do for you today?');
-      else if (currentHour >= 12 && currentHour < 18) setGreeting('Good Afternoon, What can I do for you today?');
-      else setGreeting('Good Evening, What can I do for you today?');
-    };
-
-    updateGreeting();
-    const intervalId = setInterval(updateGreeting, 60000);
-    return () => clearInterval(intervalId);
-  }, []);
-
-  return <h1>{greeting}</h1>;
-};
-
 
 const AskAi = () => {
+  // --- STATE CHANGES ---
   const [question, setQuestion] = useState("");
-  const [reply, setReply] = useState("");
+  // We no longer need `reply`. Instead, we store the whole conversation.
+  const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // --- CHANGE 2: REPLACE THE ENTIRE askAi FUNCTION ---
-  // This new version uses the standard `fetch` API to talk to your Express backend.
+  // --- LOGIC CHANGES ---
   const askAi = async () => {
     if (!question.trim()) return;
     setLoading(true);
-    setReply(""); // Clear the previous reply
+
+    const userMessage = { role: 'user', content: question };
+    // Create the new history to be sent to the API
+    const newHistory = [...conversation, userMessage];
+
+    // Immediately add the user's question to the chat display
+    setConversation(newHistory);
+    setQuestion(""); // Clear the input box
 
     try {
-      // The Vite proxy we configured handles routing this to http://localhost:3001
+      // The fetch call now sends the 'history' object
       const response = await fetch("/api/ask-ai", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: question }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ history: newHistory }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        // If the server sends an error (like a 400 or 500 status), use its error message.
         throw new Error(data.error || "Something went wrong on the server.");
       }
 
-      setReply(data.reply);
+      const assistantMessage = { role: 'assistant', content: data.reply };
+      // Add the AI's response to the conversation
+      setConversation([...newHistory, assistantMessage]);
 
     } catch (error) {
       console.error("Failed to ask AI:", error);
-      // Display the error message in the UI for a better user experience.
-      setReply(`Error: ${error.message}`);
+      const errorMessage = { role: 'assistant', content: `Error: ${error.message}` };
+      // Add the error message to the conversation
+      setConversation([...newHistory, errorMessage]);
     }
 
     setLoading(false);
   };
-  // --- END OF REPLACED FUNCTION ---
 
-
-  // The JSX for your component does not need to be changed at all.
+  // --- JSX / RENDER CHANGES ---
   return (
     <div>
       <Header />
@@ -80,17 +58,25 @@ const AskAi = () => {
       </Link>
       <div className="ai-container">
         <Greeting />
+
+        {/* This is the new chat history display area */}
+        <div className="chat-history">
+          {conversation.map((message, index) => (
+            <div key={index} className={`message ${message.role}`}>
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            </div>
+          ))}
+        </div>
+
         <input
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && askAi()} // Allows pressing Enter to send
           placeholder="Ask something..."
         />
         <button onClick={askAi} disabled={loading || !question}>
           {loading ? "Thinking..." : "Ask"}
         </button>
-        {/* --- THIS IS THE CHANGE --- */}
-        {/* 2. USE THE COMPONENT TO RENDER THE REPLY */}
-        {reply && <div className="ai-reply"><ReactMarkdown>{reply}</ReactMarkdown></div>}
       </div>
     </div>
   );
