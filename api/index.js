@@ -23,7 +23,7 @@ app.get('/api/test', (req, res) => {
 
 app.post('/api/ask-ai', async (req, res) => {
   try {
-    const { message } = req.body;S
+    const { message } = req.body;
     console.log("Received message for AI:", message);
 
     if (!message) {
