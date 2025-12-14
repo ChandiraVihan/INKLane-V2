@@ -1,4 +1,11 @@
-// In api/index.js
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import 'dotenv/config';
+
+const app = express(); // <-- THIS LINE IS MISSING. ADD IT BACK.
+
+const PORT = 3001;
 
 app.post('/api/ask-ai', async (req, res) => {
   try {
