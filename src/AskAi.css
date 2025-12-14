@@ -67,17 +67,30 @@
 
 /* In AskAi.css, ADD THE FOLLOWING STYLES AT THE END OF THE FILE */
 
+/* In AskAi.css, replace the old .chat-history style with this one */
+
 .chat-history {
   width: 100%;
-  height: 400px; /* Give the chat a fixed height */
-  overflow-y: auto; /* Add a scrollbar if the content is too long */
+  max-height: 400px; /* The chat can grow up to this height */
+  min-height: 0;     /* It can start as small as needed */
+  overflow-y: auto;
   margin-bottom: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 15px; /* Remove top/bottom padding when empty */
   border-radius: 10px;
-  padding: 15px;
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Add space between chat bubbles */
+  gap: 12px;
+  /* Add a smooth transition for when it grows */
+  transition: all 0.3s ease;
+}
+
+/* In AskAi.css, add this new style at the end */
+
+/* This style applies ONLY when the chat has messages. */
+.chat-history:has(.message) {
+  padding: 15px; /* Restore the vertical padding */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Show the border */
+  background-color: rgba(0, 0, 0, 0.2); /* Show the background */
 }
 
 .message {
@@ -97,7 +110,7 @@
 
 /* We need a new style for the user's messages */
 .message.user {
-  background-color: #7a42f4; /* Use your existing button color */
+  background-color: #7d9bff ; /* Use your existing button color */
   align-self: flex-end; /* Align to the right */
   color: white;
 }
