@@ -32,35 +32,34 @@ const AskAi = () => {
   const [loading, setLoading] = useState(false);
 
   const askAi = async () => {
-    // Stop if the question is empty
     if (!question.trim()) return;
-
     setLoading(true);
 
-    // --- START: MODIFICATION ---
-    // 1. Retrieve the secret key from your React app's environment variables.
-    const functionSecret = process.env.REACT_APP_FUNCTION_SECRET;
+    // 1. Read the secret key from Vite's environment variables
+    const functionSecret = import.meta.env.VITE_FUNCTION_SECRET;
 
-    // 2. Add a check to ensure the secret key is available.
+    // --- START: DEBUGGING LOG ---
+    // This will print the key to your browser's developer console (F12)
+    console.log(`[CLIENT] Sending secret key: "${functionSecret}"`);
+    // --- END: DEBUGGING LOG ---
+
     if (!functionSecret) {
-      console.error("Error: REACT_APP_FUNCTION_SECRET is not set in the environment.");
+      console.error("Error: VITE_FUNCTION_SECRET is not set in the .env file.");
       setReply("Configuration error: The application is missing its secret key.");
       setLoading(false);
       return;
     }
-    // --- END: MODIFICATION ---
 
-    // 3. Invoke the function with the secret key in the Authorization header.
+    // 2. Invoke the function with the secret key
     const { data, error } = await supabase.functions.invoke("ask-ai", {
       body: { message: question },
       headers: {
-        'Authorization': `Bearer ${functionSecret}` // Use the secret key
+        'Authorization': `Bearer ${functionSecret}`
       }
     });
 
     if (error) {
       console.error("Function invoke error:", error);
-      // Provide a more specific error if unauthorized
       if (error.context?.status === 401) {
         setReply("Authorization failed. Please check the secret key configuration.");
       } else {
@@ -81,17 +80,14 @@ const AskAi = () => {
       </Link>
       <div className="ai-container">
         <Greeting />
-
         <input
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Ask something..."
         />
-
         <button onClick={askAi} disabled={loading || !question}>
           {loading ? "Thinking..." : "Ask"}
         </button>
-
         {reply && <p>{reply}</p>}
       </div>
     </div>
