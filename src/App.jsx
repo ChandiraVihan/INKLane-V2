@@ -11,6 +11,7 @@ import { cards } from './data';
 import Learning from './Learning';
 import Todolist from './Todolist';
 import AskAi from './AskAi';
+import Demo from './login';
 
 function App() {
   const [viewMode, setViewMode] = useState('welcome');
@@ -63,6 +64,10 @@ function App() {
     {
       path: '/ask-ai',
       element: <AskAi />,
+    },
+    {
+      path  : '/demo',
+      element: <Demo />,
     },
   ]);
 
