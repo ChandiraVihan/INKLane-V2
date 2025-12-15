@@ -11,7 +11,8 @@ import { cards } from './data';
 import Learning from './Learning';
 import Todolist from './Todolist';
 import AskAi from './AskAi';
-import Demo from './login';
+import Login from './login';
+import Register from './Register';
 
 function App() {
   const [viewMode, setViewMode] = useState('welcome');
@@ -67,7 +68,11 @@ function App() {
     },
     {
       path  : '/login',
-      element: <login />,
+      element: <Login />,
+    },
+     {
+      path  : '/register',
+      element: <Register />,
     },
   ]);
 
