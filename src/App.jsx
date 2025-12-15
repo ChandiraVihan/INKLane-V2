@@ -66,8 +66,8 @@ function App() {
       element: <AskAi />,
     },
     {
-      path  : '/demo',
-      element: <Demo />,
+      path  : '/login',
+      element: <login />,
     },
   ]);
 

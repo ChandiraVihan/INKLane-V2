@@ -13,7 +13,7 @@ import LoginPage, {
 import LoginLogo from "react-login-page/logo-rect";
 import BannerImage from'./assets/signup.jpg'
 
-const Demo = () => (
+const login = () => (
   <LoginPage style={{ height: 580 }}>
      <Title>Log in to Your Account</Title>
     <Welcome>Hey! Please enter your details to sign in.</Welcome>
@@ -36,4 +36,4 @@ const Demo = () => (
   </LoginPage>
 );
 
-export default Demo;
+export default login;
