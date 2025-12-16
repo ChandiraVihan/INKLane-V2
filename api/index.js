@@ -8,6 +8,20 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Learning from './models/Learning.js';
 
+// Authentication middleware
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Format is "Bearer TOKEN"
+
+  if (token == null) return res.sendStatus(401); // No token, unauthorized
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403); // Token is invalid, forbidden
+    req.user = user; // Add the user payload (e.g., { userId: ... }) to the request
+    next(); // Proceed to the next step (the actual route logic)
+  });
+};
+
 // 1. Initialize the Express App
 const app = express();
 const PORT = 3001;
@@ -26,6 +40,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // POST: Register a new user
 app.post('/api/users/register', async (req, res) => {
+  console.log('Registration request received:', req.body);
   try {
     const { email, password } = req.body;
     // Check if user already exists
@@ -44,8 +59,10 @@ app.post('/api/users/register', async (req, res) => {
   }
 });
 
+
 // POST: Log in a user
 app.post('/api/users/login', async (req, res) => {
+  console.log('Login request received:', req.body);
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -69,19 +86,19 @@ app.post('/api/users/login', async (req, res) => {
   }
 });
 
-// In api/index.js, add this function
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Format is "Bearer TOKEN"
-
-  if (token == null) return res.sendStatus(401); // No token, unauthorized
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403); // Token is invalid, forbidden
-    req.user = user; // Add the user payload (e.g., { userId: ... }) to the request
-    next(); // Proceed to the next step (the actual route logic)
-  });
-};
+// POST: Verify a JWT token
+app.post('/api/users/verify-token', authenticateToken, (req, res) => {
+  // If middleware passes, token is valid
+  if (!req.user) {
+    return res.status(500).json({ error: 'Authentication middleware failed to attach user data' });
+  }
+  
+  if (!req.user.userId) {
+    return res.status(500).json({ error: 'User ID not found in token payload', payload: req.user });
+  }
+  
+  res.json({ valid: true, userId: req.user.userId });
+});
 
 // 4. API Routes
 app.post('/api/ask-ai', async (req, res) => {
@@ -208,8 +225,15 @@ app.get('/api/todos', authenticateToken, async (req, res) => {
 // POST a new todo for the logged-in user
 app.post('/api/todos', authenticateToken, async (req, res) => {
   try {
-    const { goal } = req.body;
-    const newTodo = new Todo({ goal, userId: req.user.userId });
+    const { goal, priority = 1, pinned = false } = req.body;
+    // Automatically pin high-priority items (priority 3)
+    const shouldPin = pinned || parseInt(priority) === 3;
+    const newTodo = new Todo({ 
+      goal, 
+      priority: parseInt(priority),
+      pinned: Boolean(shouldPin),
+      userId: req.user.userId 
+    });
     await newTodo.save();
     res.status(201).json(newTodo);
   } catch (err) {
@@ -221,10 +245,17 @@ app.post('/api/todos', authenticateToken, async (req, res) => {
 app.put('/api/todos/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { isFinished } = req.body;
+    const { isFinished, priority, pinned } = req.body;
+    
+    // Build update object dynamically
+    const updateFields = {};
+    if (isFinished !== undefined) updateFields.isFinished = isFinished;
+    if (priority !== undefined) updateFields.priority = parseInt(priority);
+    if (pinned !== undefined) updateFields.pinned = Boolean(pinned);
+    
     const updatedTodo = await Todo.findOneAndUpdate(
       { _id: id, userId: req.user.userId }, // Condition: must match ID and user
-      { isFinished },
+      updateFields,
       { new: true }
     );
     if (!updatedTodo) return res.status(404).json({ error: "Todo not found or not authorized." });

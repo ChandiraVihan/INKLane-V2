@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './DefaultPage.css';
+import { useAuth } from './AuthContext';
 
 export default function DefaultPage({
   mouseForce = 20,
@@ -31,6 +32,15 @@ export default function DefaultPage({
   const intersectionObserverRef = useRef(null);
   const isVisibleRef = useRef(true);
   const resizeRafRef = useRef(null);
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+
+  // Redirect to app if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/app');
+    }
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -1168,11 +1178,34 @@ export default function DefaultPage({
     <div className="default-page-container">
       <div ref={mountRef} className={`liquid-ether-container ${className || ''}`} style={style} />
       <div className="content">
-        <h1>Welcome to InkLane</h1>
-        <p>Your creative journey starts here.</p>
-        <Link to="/login" className="get-started-btn">
-          Get Started
-        </Link>
+        <div className="header-section">
+          <h1>Welcome to InkLane</h1>
+          <p>Your creative journey starts here.</p>
+        </div>
+        
+        <div className="features-section">
+          <div className="feature">
+            <div className="feature-icon">✍️</div>
+            <div className="feature-title">Journal</div>
+            <div className="feature-desc">Capture your thoughts and ideas</div>
+          </div>
+          <div className="feature">
+            <div className="feature-icon">📚</div>
+            <div className="feature-title">Learn</div>
+            <div className="feature-desc">Track your learning progress</div>
+          </div>
+          <div className="feature">
+            <div className="feature-icon">✅</div>
+            <div className="feature-title">Goals</div>
+            <div className="feature-desc">Achieve your daily targets</div>
+          </div>
+        </div>
+        
+        <div className="footer-section">
+          <Link to="/login" className="get-started-btn">
+            Get Started
+          </Link>
+        </div>
       </div>
     </div>
   );

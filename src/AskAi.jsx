@@ -4,6 +4,7 @@ import Header from './Header';
 import Home from './Home';
 import './AskAi.css';
 import ReactMarkdown from 'react-markdown';
+import api from './api';
 
 const Greeting = () => {
   const [greeting, setGreeting] = useState('');
@@ -26,6 +27,7 @@ const Greeting = () => {
 
 
 
+
 const AskAi = () => {
   const [question, setQuestion] = useState("");
   const [conversation, setConversation] = useState([]);
@@ -42,18 +44,9 @@ const AskAi = () => {
     setQuestion("");
 
     try {
-      const response = await fetch("/api/ask-ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ history: newHistory }),
-      });
+      const response = await api.post("/ask-ai", { history: newHistory });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "Something went wrong.");
-      }
-      
-      const assistantMessage = { role: 'assistant', content: data.reply };
+      const assistantMessage = { role: 'assistant', content: response.data.reply };
       setConversation([...newHistory, assistantMessage]);
 
     } catch (error) {
