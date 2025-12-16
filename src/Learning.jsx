@@ -15,8 +15,8 @@ import './Learning.css';
   const [loading, setLoading] = useState(false);
 
   // ---  CLOUDINARY DETAILS  ---
-  const CLOUDINARY_CLOUD_NAME = 'YOUR_CLOUD_NAME'; 
-  const CLOUDINARY_UPLOAD_PRESET = 'YOUR_UPLOAD_PRESET'; 
+  const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   const fetchLearnings = async () => {
     try {
