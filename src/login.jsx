@@ -25,7 +25,6 @@ const Login = () => {
     e.preventDefault();
     console.log('Login form submitted with:', { email, password });
     try {
-      // Fix the endpoint - remove /api prefix since api.js already has it as baseURL
       const response = await api.post('/users/login', { email, password });
       console.log('Login response:', response.data);
       const { token, userId } = response.data;
@@ -37,10 +36,7 @@ const Login = () => {
     }
   };
 
-  // Add a separate function to test if the submit button is working
   const handleButtonClick = (e) => {
-    console.log('Login button clicked');
-    // Don't prevent default here, let the form handle it
     handleSubmit(e);
   };
 

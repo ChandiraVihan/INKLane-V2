@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Home from './Home';
 import { Link } from 'react-router-dom';
-import './TodoList.css'; // We will create this file next
+import './TodoList.css'; 
 import api from './api';
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newGoal, setNewGoal] = useState('');
-  const [priority, setPriority] = useState(1); // 1 = low, 2 = medium, 3 = high
+  const [priority, setPriority] = useState(1);
 
   // Function to fetch all todos from our new API endpoint
   const fetchTodos = async () => {

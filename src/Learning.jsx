@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from './api';
+import cloudinaryApi from './cloudinaryApi'; // Cloudinary API instance
 import Header from './Header';
 import Home from './Home';
 import { Link } from 'react-router-dom';
@@ -57,15 +58,16 @@ import ReactMarkdown from 'react-markdown';
 
     let imageUrl = '';
 
-    // STEP 1: If an image is selected, upload it to Cloudinary first.
+    //  If an image is selected, upload it to Cloudinary first.
     if (image) {
       const formData = new FormData();
       formData.append('file', image);
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
       try {
-        const response = await api.post(
-          `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        // Use the separate Cloudinary API instance without auth headers
+        const response = await cloudinaryApi.post(
+          `/${CLOUDINARY_CLOUD_NAME}/image/upload`,
           formData
         );
         imageUrl = response.data.secure_url; // Get the URL from Cloudinary
@@ -76,7 +78,7 @@ import ReactMarkdown from 'react-markdown';
       }
     }
 
-    // STEP 2: Now, save the learning to  backend with the Cloudinary URL.
+    // Saving the learning to  backend with the Cloudinary URL.
     try {
       await api.post('/learnings', { text, imageUrl, date });
       // Reset form and refresh list
@@ -118,10 +120,13 @@ import ReactMarkdown from 'react-markdown';
     setAiResponse('');
     
     try {
-      // Prepare the prompt for the AI
-      const prompt = `Based on the following learning content, please provide a detailed explanation or deeper insights:\n\n"${selectedLearning.text}"${
-        selectedLearning.imageUrl ? '\n\nThere is also an image associated with this learning.' : ''
-      }`;
+      // Prepare the prompt for the AI with both text and image context
+      let prompt = `Based on the following learning content, please provide a detailed explanation or deeper insights:\n\n"${selectedLearning.text}"`;
+      
+      if (selectedLearning.imageUrl) {
+        prompt += `\n\nThere is also an image associated with this learning. The image URL is: ${selectedLearning.imageUrl}`;
+        prompt += `\n\nPlease consider both the text content and the visual information in the image when providing your insights.`;
+      }
       
       const response = await api.post('/ask-ai', {
         history: [

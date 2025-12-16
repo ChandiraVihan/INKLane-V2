@@ -32,7 +32,6 @@ const register = () => {
     }
     
     try {
-      // Fix the endpoint - remove /api prefix since api.js already has it as baseURL
       const response = await api.post('/users/register', { email, password });
       console.log('Register response:', response.data);
       setSuccess(true);
@@ -46,10 +45,9 @@ const register = () => {
     }
   };
 
-  // Add a separate function to test if the submit button is working
+  
   const handleButtonClick = (e) => {
     console.log('Register button clicked');
-    // Don't prevent default here, let the form handle it
     handleSubmit(e);
   };
 
