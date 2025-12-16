@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // Styles for the calendar
 import './Learning.css';
+import ReactMarkdown from 'react-markdown';
 
  const Learning = () => {
   const [learnings, setLearnings] = useState([]);
@@ -13,7 +14,10 @@ import './Learning.css';
   const [image, setImage] = useState(null);
   const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
-  const [filterDate, setFilterDate] = useState(null); // For filtering learnings by date
+  const [filterDate, setFilterDate] = useState(null);
+  const [selectedLearning, setSelectedLearning] = useState(null); // For modal popup
+  const [aiResponse, setAiResponse] = useState(''); // For AI response
+  const [aiLoading, setAiLoading] = useState(false); // For AI loading state
 
   // ---  CLOUDINARY DETAILS  ---
   const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -93,6 +97,46 @@ import './Learning.css';
         return learningDate.toDateString() === filterDate.toDateString();
       })
     : learnings;
+    
+  // Function to open learning in modal
+  const openLearningModal = (learning) => {
+    setSelectedLearning(learning);
+    setAiResponse(''); // Clear previous AI response when opening new learning
+  };
+  
+  // Function to close modal
+  const closeLearningModal = () => {
+    setSelectedLearning(null);
+    setAiResponse('');
+  };
+  
+  // Function to send learning content to AI
+  const sendToAI = async () => {
+    if (!selectedLearning) return;
+    
+    setAiLoading(true);
+    setAiResponse('');
+    
+    try {
+      // Prepare the prompt for the AI
+      const prompt = `Based on the following learning content, please provide a detailed explanation or deeper insights:\n\n"${selectedLearning.text}"${
+        selectedLearning.imageUrl ? '\n\nThere is also an image associated with this learning.' : ''
+      }`;
+      
+      const response = await api.post('/ask-ai', {
+        history: [
+          { role: 'user', content: prompt }
+        ]
+      });
+      
+      setAiResponse(response.data.reply);
+    } catch (error) {
+      console.error('Failed to get AI response:', error);
+      setAiResponse('Sorry, I couldn\'t process that request. Please try again.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
   
   return (
     <div>
@@ -132,7 +176,11 @@ import './Learning.css';
 
   <div className="learnings-list">
     {filteredLearnings.map((learning) => (
-      <div key={learning._id} className="learning-item">
+      <div 
+        key={learning._id} 
+        className="learning-item"
+        onClick={() => openLearningModal(learning)} // Open modal on click
+      >
         {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
         <div className="learning-content">
           <p>{learning.text}</p>
@@ -142,6 +190,50 @@ import './Learning.css';
     ))}
   </div>
 </div>
+
+{/* Modal for detailed view */}
+{selectedLearning && (
+  <div className="modal-overlay" onClick={closeLearningModal}>
+    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <button className="modal-close" onClick={closeLearningModal}>×</button>
+      <div className="modal-learning-item">
+        {selectedLearning.imageUrl && (
+          <img 
+            src={selectedLearning.imageUrl} 
+            alt="Learning visual" 
+            className="modal-learning-image"
+          />
+        )}
+        <div className="modal-learning-content">
+          <p className="modal-learning-text">{selectedLearning.text}</p>
+          <small className="modal-learning-date">
+            {new Date(selectedLearning.date).toLocaleDateString()}
+          </small>
+          
+          {/* AI Section */}
+          <div className="ai-section">
+            <button 
+              className="ai-button"
+              onClick={sendToAI}
+              disabled={aiLoading}
+            >
+              {aiLoading ? 'Learning Deep...' : 'Learn Deep'}
+            </button>
+            
+            {aiResponse && (
+              <div className="ai-response">
+                <h3>Deep Insights:</h3>
+                <div className="ai-response-content">
+                  <ReactMarkdown>{aiResponse}</ReactMarkdown>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
  };
