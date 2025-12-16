@@ -199,7 +199,6 @@ app.get('/api/learnings', authenticateToken, async (req, res) => {
 app.post('/api/learnings', authenticateToken, async (req, res) => {
   try {
     const { text, imageUrl, date } = req.body;
-    console.log('Creating learning entry with:', { text, imageUrl, date }); // Debugging line
     const newLearning = new Learning({
       text,
       imageUrl,
@@ -207,10 +206,8 @@ app.post('/api/learnings', authenticateToken, async (req, res) => {
       userId: req.user.userId,
     });
     await newLearning.save();
-    console.log('Created learning entry:', newLearning); // Debugging line
     res.status(201).json(newLearning);
   } catch (err) {
-    console.error("Failed to create learning:", err); // Debugging line
     res.status(500).json({ error: "Failed to create learning." });
   }
 });
