@@ -1,0 +1,8 @@
+.learning-container { max-width: 800px; margin: 2rem auto; padding: 2rem; background-color: rgba(255, 255, 255, 0.1); border-radius: 15px; }
+.learning-form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+.learning-form textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; font-size: 16px; }
+.form-row { display: flex; justify-content: space-between; align-items: center; }
+.learnings-list { display: flex; flex-direction: column; gap: 20px; }
+.learning-item { display: flex; gap: 15px; background-color: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; }
+.learning-item img { max-width: 150px; height: auto; border-radius: 4px; }
+.learning-content small { color: #aaa; margin-top: 10px; display: block; }
