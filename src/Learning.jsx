@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import Header from './Header';
 import Home from './Home';
 import { Link } from 'react-router-dom';
@@ -20,10 +20,7 @@ import './Learning.css';
 
   const fetchLearnings = async () => {
     try {
-      const token = localStorage.getItem('token'); 
-      const response = await axios.get('/api/learnings', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.get('/learnings');
       setLearnings(response.data);
     } catch (error) {
       console.error("Failed to fetch learnings:", error);
@@ -48,7 +45,7 @@ import './Learning.css';
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
       try {
-        const response = await axios.post(
+        const response = await api.post(
           `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
           formData
         );
@@ -62,12 +59,7 @@ import './Learning.css';
 
     // STEP 2: Now, save the learning to  backend with the Cloudinary URL.
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        '/api/learnings',
-        { text, imageUrl, date },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post('/learnings', { text, imageUrl, date });
       // Reset form and refresh list
       setText('');
       setImage(null);
@@ -119,4 +111,3 @@ import './Learning.css';
  };
 
 export default Learning;
-

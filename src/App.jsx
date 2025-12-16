@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from 'react-router-dom';
 import Lanyard from './Lanyard';
 import Header from './Header';
 import Card from './Card';
@@ -13,6 +13,9 @@ import Todolist from './Todolist';
 import AskAi from './AskAi';
 import Login from './login';
 import Register from './Register';
+import DefaultPage from './DefaultPage';
+import { useAuth } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   const [viewMode, setViewMode] = useState('welcome');
@@ -61,29 +64,49 @@ function App() {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <AppLayout />,
+      element: <DefaultPage />,
+    },
+    {
+      path: '/app',
+      element: (
+        <ProtectedRoute>
+          <AppLayout />
+        </ProtectedRoute>
+      ),
     },
     {
       path: '/learning',
-      element: <Learning />,
+      element: (
+        <ProtectedRoute>
+          <Learning />
+        </ProtectedRoute>
+      ),
     },
     {
       path: '/todolist',
-      element: <Todolist />,
+      element: (
+        <ProtectedRoute>
+          <Todolist />
+        </ProtectedRoute>
+      ),
     },
     {
       path: '/ask-ai',
-      element: <AskAi />,
+      element: (
+        <ProtectedRoute>
+          <AskAi />
+        </ProtectedRoute>
+      ),
     },
     {
       element: <AuthLayout />,
       children: [
         {
-          path  : '/login',
+          path: '/login',
           element: <Login />,
         },
-         {
-          path  : '/register',
+        {
+          path: '/register',
           element: <Register />,
         },
       ]

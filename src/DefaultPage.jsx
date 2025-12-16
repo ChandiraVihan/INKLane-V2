@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './DefaultPage.css';
+import { useAuth } from './AuthContext';
 
 export default function DefaultPage({
   mouseForce = 20,
@@ -31,6 +32,15 @@ export default function DefaultPage({
   const intersectionObserverRef = useRef(null);
   const isVisibleRef = useRef(true);
   const resizeRafRef = useRef(null);
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+
+  // Redirect to app if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/app');
+    }
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     if (!mountRef.current) return;

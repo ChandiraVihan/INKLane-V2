@@ -3,6 +3,7 @@ import Header from './Header';
 import Home from './Home';
 import { Link } from 'react-router-dom';
 import './TodoList.css'; // We will create this file next
+import api from './api';
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
@@ -11,9 +12,8 @@ const TodoList = () => {
   // Function to fetch all todos from our new API endpoint
   const fetchTodos = async () => {
     try {
-      const response = await fetch('/api/todos');
-      const data = await response.json();
-      setTodos(data);
+      const response = await api.get('/todos');
+      setTodos(response.data);
     } catch (error) {
       console.error("Failed to fetch todos:", error);
     }
@@ -29,32 +29,33 @@ const TodoList = () => {
     e.preventDefault(); // Prevents the form from reloading the page
     if (!newGoal.trim()) return;
 
-    await fetch('/api/todos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ goal: newGoal }),
-    });
-
-    setNewGoal(''); // Clear the input box
-    fetchTodos(); // Refresh the list from the server
+    try {
+      await api.post('/todos', { goal: newGoal });
+      setNewGoal(''); // Clear the input box
+      fetchTodos(); // Refresh the list from the server
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+    }
   };
 
   // Function to toggle the 'isFinished' status
   const handleToggleFinished = async (id, currentStatus) => {
-    await fetch(`/api/todos/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ isFinished: !currentStatus }),
-    });
-    fetchTodos(); // Refresh the list
+    try {
+      await api.put(`/todos/${id}`, { isFinished: !currentStatus });
+      fetchTodos(); // Refresh the list
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+    }
   };
   
   // Function to delete a todo
   const handleDeleteTodo = async (id) => {
-    await fetch(`/api/todos/${id}`, {
-      method: 'DELETE',
-    });
-    fetchTodos(); // Refresh the list
+    try {
+      await api.delete(`/todos/${id}`);
+      fetchTodos(); // Refresh the list
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+    }
   };
 
   return (
