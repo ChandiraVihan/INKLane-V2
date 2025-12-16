@@ -45,11 +45,22 @@ import './Learning.css';
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
       try {
-        const response = await api.post(
+        // Make direct fetch call to Cloudinary API instead of using our api instance
+        const response = await fetch(
           `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-          formData
+          {
+            method: 'POST',
+            body: formData
+          }
         );
-        imageUrl = response.data.secure_url; // Get the URL from Cloudinary
+        
+        if (!response.ok) {
+          throw new Error(`Cloudinary upload failed with status ${response.status}`);
+        }
+        
+        const data = await response.json();
+        imageUrl = data.secure_url; // Get the URL from Cloudinary
+        console.log("Image uploaded successfully:", imageUrl); // Debugging line
       } catch (error) {
         console.error("Image upload failed:", error);
         setLoading(false);
@@ -57,7 +68,7 @@ import './Learning.css';
       }
     }
 
-    // STEP 2: Now, save the learning to  backend with the Cloudinary URL.
+    // STEP 2: Now, save the learning to backend with the Cloudinary URL.
     try {
       await api.post('/learnings', { text, imageUrl, date });
       // Reset form and refresh list
@@ -73,40 +84,38 @@ import './Learning.css';
    return (
      <div>
        <Header />
-       <Link to="/">
-         <Home />
-       </Link>       
-      <div className="learning-container">
-      <h1>My Learnings</h1>
-      <form onSubmit={handleSubmit} className="learning-form">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="What did you learn today?"
-          rows="4"
-        />
-        <div className="form-row">
-          <DatePicker selected={date} onChange={(d) => setDate(d)} />
-          <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : 'Add Learning'}
-        </button>
-      </form>
-
-      <div className="learnings-list">
-        {learnings.map((learning) => (
-          <div key={learning._id} className="learning-item">
-            {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
-            <div className="learning-content">
-              <p>{learning.text}</p>
-              <small>{new Date(learning.date).toLocaleDateString()}</small>
-            </div>
-          </div>
-        ))}
-      </div>
+       <Link to="/"><Home /></Link>
+<div className="learning-container">
+  <h1>My Learnings</h1>
+  <form onSubmit={handleSubmit} className="learning-form">
+    <textarea
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      placeholder="What did you learn today?"
+      rows="4"
+    />
+    <div className="form-row">
+      <DatePicker selected={date} onChange={(d) => setDate(d)} />
+      <input type="file" onChange={(e) => setImage(e.target.files[0])} />
     </div>
-     </div>
+    <button type="submit" disabled={loading}>
+      {loading ? 'Saving...' : 'Add Learning'}
+    </button>
+  </form>
+
+  <div className="learnings-list">
+    {learnings.map((learning) => (
+      <div key={learning._id} className="learning-item">
+        {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
+        <div className="learning-content">
+          <p>{learning.text}</p>
+          <small>{new Date(learning.date).toLocaleDateString()}</small>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+</div>
   );
  };
 
