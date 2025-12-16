@@ -32,17 +32,49 @@
 
 .form-row { 
   display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
   gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-.form-row input {
+.form-row > div,
+.form-row > input[type="file"] {
   flex: 1;
+  min-width: 150px;
+}
+
+.form-row input[type="file"] {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  margin-left: 0;
+  box-sizing: border-box;
+  height: 36px; /* Match the height of the date picker */
+}
+
+.form-row input[type="file"]::-webkit-file-upload-button {
+  background-color: #7a42f4;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  margin-right: 8px;
+}
+
+.form-row input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #6a3ae0;
 }
 
 .react-datepicker-wrapper {
   flex: 1;
+  min-width: 150px;
 }
 
 .react-datepicker__input-container input {
@@ -52,6 +84,9 @@
   border: 1px solid #ccc;
   background-color: rgba(255, 255, 255, 0.15);
   color: white;
+  font-size: 14px;
+  box-sizing: border-box;
+  height: 36px; /* Explicit height to match file input */
 }
 
 .learning-form button {
@@ -153,4 +188,26 @@
   font-style: italic;
   text-align: center;
   padding: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .form-row > div,
+  .form-row > input[type="file"] {
+    min-width: unset;
+  }
+  
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .form-row input[type="file"],
+  .react-datepicker__input-container input {
+    height: auto; /* Reset height on mobile */
+  }
 }
