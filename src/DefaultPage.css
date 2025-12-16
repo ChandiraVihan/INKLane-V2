@@ -45,6 +45,46 @@
   opacity: 0.9;
 }
 
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.feature {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  width: 150px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.feature-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.feature-desc {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
 .get-started-btn {
   display: inline-block;
   padding: 16px 40px;
@@ -60,6 +100,7 @@
   border: 2px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
+  margin-top: 2rem;
 }
 
 .get-started-btn::before {
@@ -106,6 +147,16 @@
   
   .content p {
     font-size: 1.1rem;
+  }
+  
+  .features {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .feature {
+    width: 80%;
   }
   
   .get-started-btn {

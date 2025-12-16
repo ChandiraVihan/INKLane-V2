@@ -1180,6 +1180,25 @@ export default function DefaultPage({
       <div className="content">
         <h1>Welcome to InkLane</h1>
         <p>Your creative journey starts here.</p>
+        
+        <div className="features">
+          <div className="feature">
+            <div className="feature-icon">✍️</div>
+            <div className="feature-title">Journal</div>
+            <div className="feature-desc">Capture your thoughts and ideas</div>
+          </div>
+          <div className="feature">
+            <div className="feature-icon">📚</div>
+            <div className="feature-title">Learn</div>
+            <div className="feature-desc">Track your learning progress</div>
+          </div>
+          <div className="feature">
+            <div className="feature-icon">✅</div>
+            <div className="feature-title">Goals</div>
+            <div className="feature-desc">Achieve your daily targets</div>
+          </div>
+        </div>
+        
         <Link to="/login" className="get-started-btn">
           Get Started
         </Link>
