@@ -16,17 +16,27 @@
 
 .content {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 2;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
   color: white;
-  width: 90%;
+  text-align: center;
+}
+
+.header-section {
+  margin-top: 2rem;
   max-width: 600px;
 }
 
-.content h1 {
+.header-section h1 {
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -38,19 +48,20 @@
   animation: glow 3s ease-in-out infinite alternate;
 }
 
-.content p {
+.header-section p {
   font-size: 1.4rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   opacity: 0.9;
 }
 
-.features {
+.features-section {
   display: flex;
   justify-content: center;
   gap: 2rem;
-  margin-top: 3rem;
   flex-wrap: wrap;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .feature {
@@ -85,6 +96,12 @@
   opacity: 0.8;
 }
 
+.footer-section {
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 300px;
+}
+
 .get-started-btn {
   display: inline-block;
   padding: 16px 40px;
@@ -100,7 +117,7 @@
   border: 2px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
-  margin-top: 2rem;
+  width: 100%;
 }
 
 .get-started-btn::before {
@@ -141,15 +158,15 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .content h1 {
+  .header-section h1 {
     font-size: 2.5rem;
   }
   
-  .content p {
+  .header-section p {
     font-size: 1.1rem;
   }
   
-  .features {
+  .features-section {
     flex-direction: column;
     align-items: center;
     gap: 1rem;

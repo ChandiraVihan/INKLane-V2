@@ -1178,10 +1178,12 @@ export default function DefaultPage({
     <div className="default-page-container">
       <div ref={mountRef} className={`liquid-ether-container ${className || ''}`} style={style} />
       <div className="content">
-        <h1>Welcome to InkLane</h1>
-        <p>Your creative journey starts here.</p>
+        <div className="header-section">
+          <h1>Welcome to InkLane</h1>
+          <p>Your creative journey starts here.</p>
+        </div>
         
-        <div className="features">
+        <div className="features-section">
           <div className="feature">
             <div className="feature-icon">✍️</div>
             <div className="feature-title">Journal</div>
@@ -1199,9 +1201,11 @@ export default function DefaultPage({
           </div>
         </div>
         
-        <Link to="/login" className="get-started-btn">
-          Get Started
-        </Link>
+        <div className="footer-section">
+          <Link to="/login" className="get-started-btn">
+            Get Started
+          </Link>
+        </div>
       </div>
     </div>
   );
