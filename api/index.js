@@ -6,6 +6,7 @@ import Todo from './models/Todo.js';
 import User from './models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Learning from './models/Learning.js';
 
 // 1. Initialize the Express App
 const app = express();
@@ -165,6 +166,34 @@ app.post('/api/ask-ai', async (req, res) => {
 
 // In api/index.js
 // REMOVE YOUR OLD TODO ROUTES AND REPLACE WITH THESE
+
+// GET: Fetch all learnings for the logged-in user
+app.get('/api/learnings', authenticateToken, async (req, res) => {
+  try {
+    // Sort by date, newest first
+    const learnings = await Learning.find({ userId: req.user.userId }).sort({ date: -1 });
+    res.json(learnings);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch learnings." });
+  }
+});
+
+// POST: Create a new learning entry
+app.post('/api/learnings', authenticateToken, async (req, res) => {
+  try {
+    const { text, imageUrl, date } = req.body;
+    const newLearning = new Learning({
+      text,
+      imageUrl,
+      date,
+      userId: req.user.userId,
+    });
+    await newLearning.save();
+    res.status(201).json(newLearning);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create learning." });
+  }
+});
 
 // GET all todos for the logged-in user
 app.get('/api/todos', authenticateToken, async (req, res) => {
