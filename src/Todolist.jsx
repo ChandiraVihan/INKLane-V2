@@ -8,6 +8,7 @@ import api from './api';
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newGoal, setNewGoal] = useState('');
+  const [priority, setPriority] = useState(1); // 1 = low, 2 = medium, 3 = high
 
   // Function to fetch all todos from our new API endpoint
   const fetchTodos = async () => {
@@ -30,8 +31,9 @@ const TodoList = () => {
     if (!newGoal.trim()) return;
 
     try {
-      await api.post('/todos', { goal: newGoal });
+      await api.post('/todos', { goal: newGoal, priority: parseInt(priority) });
       setNewGoal(''); // Clear the input box
+      setPriority(1); // Reset priority to low
       fetchTodos(); // Refresh the list from the server
     } catch (error) {
       console.error("Failed to add todo:", error);
@@ -58,6 +60,33 @@ const TodoList = () => {
     }
   };
 
+  // Function to toggle pin status
+  const handleTogglePin = async (id, currentPinned) => {
+    try {
+      await api.put(`/todos/${id}`, { pinned: !currentPinned });
+      fetchTodos(); // Refresh the list
+    } catch (error) {
+      console.error("Failed to pin/unpin todo:", error);
+    }
+  };
+
+  // Function to render priority stars
+  const renderPriorityStars = (priority) => {
+    const stars = [];
+    for (let i = 1; i <= 3; i++) {
+      stars.push(
+        <span key={i} className="star">
+          {i <= priority ? '★' : '☆'}
+        </span>
+      );
+    }
+    return stars;
+  };
+
+  // Separate pinned and unpinned todos
+  const pinnedTodos = todos.filter(todo => todo.pinned);
+  const unpinnedTodos = todos.filter(todo => !todo.pinned);
+
   return (
     <>
      <Header />
@@ -73,17 +102,98 @@ const TodoList = () => {
           onChange={(e) => setNewGoal(e.target.value)}
           placeholder="Add a new goal..."
         />
+        <select 
+          className="priority-selector"
+          value={priority}
+          onChange={(e) => setPriority(parseInt(e.target.value))}
+        >
+          <option value={1}>Low Priority</option>
+          <option value={2}>Medium Priority</option>
+          <option value={3}>High Priority</option>
+        </select>
         <button type="submit">Add</button>
       </form>
+
+      {/* Pinned Todos Section */}
+      {pinnedTodos.length > 0 && (
+        <div className="pinned-todos">
+          <h2>Pinned Goals</h2>
+          <ul className="todo-list">
+            {pinnedTodos.map((todo) => (
+              <li 
+                key={todo._id} 
+                className={`${todo.isFinished ? 'finished' : ''} ${todo.priority === 3 ? 'high-priority' : todo.priority === 2 ? 'medium-priority' : 'low-priority'}`}
+              >
+                <div className="todo-content">
+                  <div className="priority-stars">
+                    {renderPriorityStars(todo.priority)}
+                  </div>
+                  <span 
+                    className="todo-text"
+                    onClick={() => handleToggleFinished(todo._id, todo.isFinished)}
+                  >
+                    {todo.goal}
+                  </span>
+                </div>
+                <div className="todo-actions">
+                  <button 
+                    className={`pin-btn ${todo.pinned ? 'pinned' : ''}`}
+                    onClick={() => handleTogglePin(todo._id, todo.pinned)}
+                  >
+                    📌
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteTodo(todo._id)} 
+                    className="delete-btn"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Regular Todos Section */}
+      <h2>{pinnedTodos.length > 0 ? 'Other Goals' : 'All Goals'}</h2>
       <ul className="todo-list">
-        {todos.map((todo) => (
-          <li key={todo._id} className={todo.isFinished ? 'finished' : ''}>
-            <span onClick={() => handleToggleFinished(todo._id, todo.isFinished)}>
-              {todo.goal}
-            </span>
-            <button onClick={() => handleDeleteTodo(todo._id)} className="delete-btn">X</button>
-          </li>
-        ))}
+        {unpinnedTodos.length === 0 ? (
+          <li className="empty-state">No goals yet. Add your first goal above!</li>
+        ) : (
+          unpinnedTodos.map((todo) => (
+            <li 
+              key={todo._id} 
+              className={`${todo.isFinished ? 'finished' : ''} ${todo.priority === 3 ? 'high-priority' : todo.priority === 2 ? 'medium-priority' : 'low-priority'}`}
+            >
+              <div className="todo-content">
+                <div className="priority-stars">
+                  {renderPriorityStars(todo.priority)}
+                </div>
+                <span 
+                  className="todo-text"
+                  onClick={() => handleToggleFinished(todo._id, todo.isFinished)}
+                >
+                  {todo.goal}
+                </span>
+              </div>
+              <div className="todo-actions">
+                <button 
+                  className={`pin-btn ${todo.pinned ? 'pinned' : ''}`}
+                  onClick={() => handleTogglePin(todo._id, todo.pinned)}
+                >
+                  📌
+                </button>
+                <button 
+                  onClick={() => handleDeleteTodo(todo._id)} 
+                  className="delete-btn"
+                >
+                  ✕
+                </button>
+              </div>
+            </li>
+          ))
+        )}
       </ul>
     </div>
     </>
