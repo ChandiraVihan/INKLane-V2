@@ -49,6 +49,15 @@ function App() {
     </div>
   );
 
+  const AuthLayout = () => (
+    <div className="app-container">
+      <Header />
+      <div className="main-content">
+        <Outlet />
+      </div>
+    </div>
+  );
+
   const router = createBrowserRouter([
     {
       path: '/',
@@ -67,13 +76,18 @@ function App() {
       element: <AskAi />,
     },
     {
-      path  : '/login',
-      element: <Login />,
-    },
-     {
-      path  : '/register',
-      element: <Register />,
-    },
+      element: <AuthLayout />,
+      children: [
+        {
+          path  : '/login',
+          element: <Login />,
+        },
+         {
+          path  : '/register',
+          element: <Register />,
+        },
+      ]
+    }
   ]);
 
   return <RouterProvider router={router} />;

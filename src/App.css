@@ -52,6 +52,11 @@
   z-index: 15;
 }
 
+
+.login-page {
+  background: transparent !important;
+}
+
 @media (max-width: 768px) {
   .welcome-text {
     font-size: 1.2rem;

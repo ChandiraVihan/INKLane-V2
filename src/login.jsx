@@ -1,21 +1,21 @@
 import React from "react";
 import LoginPage, {
-  Reset,
-  Logo,
+  Title,
+  Welcome,
   Email,
+  Password,
   Banner,
   ButtonAfter,
-  Password,
-  Input,
-  Title,
-  Welcome
+  Logo,
 } from "@react-login-page/page3";
-import LoginLogo from "react-login-page/logo-rect";
-import BannerImage from'./assets/signin.jpg'
+import BannerImage from './assets/signin.jpg';
 
-const login = () => (
-  <LoginPage style={{ height: 580 }}>
-     <Title>Log in to Your Account</Title>
+const Login = () => (
+  <LoginPage
+    style={{ height: 580 }}
+    contentStyle={{ background: 'transparent' }} // This is the correct prop
+  >
+    <Title>Log in to Your Account</Title>
     <Welcome>Hey! Please enter your details to sign in.</Welcome>
     <Logo visible={false} />
     <Email index={3} placeholder="Email" />
@@ -36,4 +36,4 @@ const login = () => (
   </LoginPage>
 );
 
-export default login;
+export default Login;
