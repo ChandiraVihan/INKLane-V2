@@ -1,8 +1,156 @@
-.learning-container { max-width: 800px; margin: 2rem auto; padding: 2rem; background-color: rgba(255, 255, 255, 0.1); border-radius: 15px; }
-.learning-form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-.learning-form textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; font-size: 16px; }
-.form-row { display: flex; justify-content: space-between; align-items: center; }
-.learnings-list { display: flex; flex-direction: column; gap: 20px; }
-.learning-item { display: flex; gap: 15px; background-color: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; }
-.learning-item img { max-width: 150px; height: auto; border-radius: 4px; }
-.learning-content small { color: #aaa; margin-top: 10px; display: block; }
+.learning-container { 
+  max-width: 800px; 
+  margin: 2rem auto; 
+  padding: 2rem; 
+  background-color: rgba(255, 255, 255, 0.1); 
+  border-radius: 15px; 
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.learning-form { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 15px; 
+  margin-bottom: 30px; 
+}
+
+.learning-form textarea { 
+  width: 100%; 
+  padding: 10px; 
+  border-radius: 8px; 
+  border: 1px solid #ccc; 
+  font-family: inherit; 
+  font-size: 16px; 
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.learning-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.form-row { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  gap: 15px;
+}
+
+.form-row input {
+  flex: 1;
+}
+
+.react-datepicker-wrapper {
+  flex: 1;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.learning-form button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background-color: #7a42f4;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.learning-form button:hover {
+  background-color: #6a3ae0;
+}
+
+.learning-form button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.filter-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.filter-section h2 {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-controls .react-datepicker-wrapper {
+  flex: 1;
+  min-width: 200px;
+}
+
+.clear-filter-btn {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ff4d4d;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.clear-filter-btn:hover {
+  background-color: #e63939;
+}
+
+.learnings-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px; 
+}
+
+.learning-item { 
+  display: flex; 
+  gap: 15px; 
+  background-color: rgba(0,0,0,0.2); 
+  padding: 15px; 
+  border-radius: 8px; 
+  border-left: 4px solid #7a42f4;
+}
+
+.learning-item img { 
+  max-width: 150px; 
+  height: auto; 
+  border-radius: 4px; 
+}
+
+.learning-content {
+  flex: 1;
+}
+
+.learning-content p {
+  color: white;
+  margin: 0 0 10px 0;
+}
+
+.learning-content small { 
+  color: #aaa; 
+  margin-top: 10px; 
+  display: block; 
+}
+
+.no-learnings {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}

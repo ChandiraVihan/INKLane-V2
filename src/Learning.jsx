@@ -12,6 +12,7 @@ import './Learning.css';
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
   const [date, setDate] = useState(new Date());
+  const [filterDate, setFilterDate] = useState(null); // New state for filtering
   const [loading, setLoading] = useState(false);
 
   // ---  CLOUDINARY DETAILS  ---
@@ -30,6 +31,14 @@ import './Learning.css';
   useEffect(() => {
     fetchLearnings();
   }, []);
+
+  // Filter learnings based on selected date
+  const filteredLearnings = filterDate 
+    ? learnings.filter(learning => {
+        const learningDate = new Date(learning.date);
+        return learningDate.toDateString() === filterDate.toDateString();
+      })
+    : learnings;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,41 +90,75 @@ import './Learning.css';
     }
     setLoading(false);
   };
-   return (
-     <div>
-       <Header />
-       <Link to="/"><Home /></Link>
-<div className="learning-container">
-  <h1>My Learnings</h1>
-  <form onSubmit={handleSubmit} className="learning-form">
-    <textarea
-      value={text}
-      onChange={(e) => setText(e.target.value)}
-      placeholder="What did you learn today?"
-      rows="4"
-    />
-    <div className="form-row">
-      <DatePicker selected={date} onChange={(d) => setDate(d)} />
-      <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-    </div>
-    <button type="submit" disabled={loading}>
-      {loading ? 'Saving...' : 'Add Learning'}
-    </button>
-  </form>
 
-  <div className="learnings-list">
-    {learnings.map((learning) => (
-      <div key={learning._id} className="learning-item">
-        {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
-        <div className="learning-content">
-          <p>{learning.text}</p>
-          <small>{new Date(learning.date).toLocaleDateString()}</small>
+  // Function to clear the date filter
+  const clearFilter = () => {
+    setFilterDate(null);
+  };
+
+  return (
+    <div>
+      <Header />
+      <Link to="/"><Home /></Link>
+      <div className="learning-container">
+        <h1>My Learnings</h1>
+        <form onSubmit={handleSubmit} className="learning-form">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="What did you learn today?"
+            rows="4"
+          />
+          <div className="form-row">
+            <DatePicker 
+              selected={date} 
+              onChange={(d) => setDate(d)} 
+              placeholderText="Select date"
+            />
+            <input 
+              type="file" 
+              onChange={(e) => setImage(e.target.files[0])} 
+            />
+          </div>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Saving...' : 'Add Learning'}
+          </button>
+        </form>
+
+        {/* Date filter section */}
+        <div className="filter-section">
+          <h2>Filter by Date</h2>
+          <div className="filter-controls">
+            <DatePicker 
+              selected={filterDate} 
+              onChange={(d) => setFilterDate(d)} 
+              placeholderText="Select date to filter"
+            />
+            <button onClick={clearFilter} className="clear-filter-btn">
+              Clear Filter
+            </button>
+          </div>
+        </div>
+
+        <div className="learnings-list">
+          {filteredLearnings.length === 0 ? (
+            <p className="no-learnings">
+              {filterDate ? 'No learnings found for this date.' : 'No learnings yet. Add your first learning above!'}
+            </p>
+          ) : (
+            filteredLearnings.map((learning) => (
+              <div key={learning._id} className="learning-item">
+                {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
+                <div className="learning-content">
+                  <p>{learning.text}</p>
+                  <small>{new Date(learning.date).toLocaleDateString()}</small>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
-    ))}
-  </div>
-</div>
-</div>
+    </div>
   );
  };
 
