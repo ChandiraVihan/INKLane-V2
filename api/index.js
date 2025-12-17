@@ -275,10 +275,16 @@ app.delete('/api/todos/:id', authenticateToken, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: "Failed to delete todo." });
     }
-});
+}
 
-// 5. Start the Server (
-// This command tells the server to run continuously and listen for requests.
-app.listen(PORT, () => {
-  console.log(`Express server is running on http://localhost:${PORT}`);
-});
+// 5. Start the Server
+// Vercel requires the app to be exported. 
+// Only listen on a port if we are NOT in production (local development).
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Express server is running on http://localhost:${PORT}`);
+  });
+}
+
+// REQUIRED for Vercel: Export the app
+export default app;
