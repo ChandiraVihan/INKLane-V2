@@ -2,11 +2,11 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import 'dotenv/config';
-import Todo from './models/todo.js';
+import Todo from './models/Todo.js';
 import User from './models/user.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import Learning from './models/learning.js';
+import Learning from './models/Learning.js';
 
 // Authentication middleware
 const authenticateToken = (req, res, next) => {
