@@ -137,53 +137,6 @@ app.post('/api/ask-ai', async (req, res) => {
   }
 });
 
-// app.get('/api/todos', async (req, res) => {
-//   try {
-//     const todos = await Todo.find({});
-//     res.json(todos);
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to fetch todos." });
-//   }
-// });
-
-// // POST: Create a new to-do item
-// app.post('/api/todos', async (req, res) => {
-//   try {
-//     const { goal } = req.body;
-//     const newTodo = new Todo({ goal });
-//     await newTodo.save();
-//     res.status(201).json(newTodo);
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to create todo." });
-//   }
-// });
-
-// // PUT: Update a to-do item (e.g., mark as finished)
-// app.put('/api/todos/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { isFinished } = req.body;
-//     const updatedTodo = await Todo.findByIdAndUpdate(id, { isFinished }, { new: true });
-//     res.json(updatedTodo);
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to update todo." });
-//   }
-// });
-
-// // DELETE: Remove a to-do item
-// app.delete('/api/todos/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     await Todo.findByIdAndDelete(id);
-//     res.json({ message: "Todo deleted successfully." });
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to delete todo." });
-//   }
-// });
-
-// In api/index.js
-// REMOVE YOUR OLD TODO ROUTES AND REPLACE WITH THESE
-
 // GET: Fetch all learnings for the logged-in user
 app.get('/api/learnings', authenticateToken, async (req, res) => {
   try {
