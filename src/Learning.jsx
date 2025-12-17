@@ -1,6 +1,254 @@
+// import React, { useState, useEffect } from 'react';
+// import api from './api';
+// import cloudinaryApi from './cloudinaryApi'; // Cloudinary API instance
+// import Header from './Header';
+// import Home from './Home';
+// import { Link } from 'react-router-dom';
+// import DatePicker from 'react-datepicker';
+// import 'react-datepicker/dist/react-datepicker.css'; // Styles for the calendar
+// import './Learning.css';
+// import ReactMarkdown from 'react-markdown';
+
+//  const Learning = () => {
+//   const [learnings, setLearnings] = useState([]);
+//   const [text, setText] = useState('');
+//   const [image, setImage] = useState(null);
+//   const [date, setDate] = useState(new Date());
+//   const [loading, setLoading] = useState(false);
+//   const [filterDate, setFilterDate] = useState(null);
+//   const [selectedLearning, setSelectedLearning] = useState(null); // For modal popup
+//   const [aiResponse, setAiResponse] = useState(''); // For AI response
+//   const [aiLoading, setAiLoading] = useState(false); // For AI loading state
+
+//   // ---  CLOUDINARY DETAILS  ---
+//   const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+//   const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+//   const fetchLearnings = async () => {
+//     try {
+//       const response = await api.get('/learnings');
+//       setLearnings(response.data);
+//     } catch (error) {
+//       console.error("Failed to fetch learnings:", error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchLearnings();
+//   }, []);
+
+//   // Function to adjust textarea height based on content
+//   const adjustTextareaHeight = (element) => {
+//     if (element) {
+//       element.style.height = 'auto';
+//       element.style.height = `${Math.min(element.scrollHeight, 300)}px`; // Max height of 300px
+//     }
+//   };
+
+//   // Adjust textarea height when text changes
+//   useEffect(() => {
+//     const textarea = document.querySelector('.learning-form textarea');
+//     adjustTextareaHeight(textarea);
+//   }, [text]);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!text.trim()) return;
+//     setLoading(true);
+
+//     let imageUrl = '';
+
+//     //  If an image is selected, upload it to Cloudinary first.
+//     if (image) {
+//       const formData = new FormData();
+//       formData.append('file', image);
+//       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+//       try {
+//         // Use the separate Cloudinary API instance without auth headers
+//         const response = await cloudinaryApi.post(
+//           `/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+//           formData
+//         );
+//         imageUrl = response.data.secure_url; // Get the URL from Cloudinary
+//       } catch (error) {
+//         console.error("Image upload failed:", error);
+//         setLoading(false);
+//         return; // Stop if the upload fails
+//       }
+//     }
+
+//     // Saving the learning to  backend with the Cloudinary URL.
+//     try {
+//       await api.post('/learnings', { text, imageUrl, date });
+//       // Reset form and refresh list
+//       setText('');
+//       setImage(null);
+//       setDate(new Date());
+//       fetchLearnings();
+//     } catch (error) {
+//       console.error("Failed to save learning:", error);
+//     }
+//     setLoading(false);
+//   };
+  
+//   // Filter learnings by selected date
+//   const filteredLearnings = filterDate
+//     ? learnings.filter(learning => {
+//         const learningDate = new Date(learning.date);
+//         return learningDate.toDateString() === filterDate.toDateString();
+//       })
+//     : learnings;
+    
+//   // Function to open learning in modal
+//   const openLearningModal = (learning) => {
+//     setSelectedLearning(learning);
+//     setAiResponse(''); // Clear previous AI response when opening new learning
+//   };
+  
+//   // Function to close modal
+//   const closeLearningModal = () => {
+//     setSelectedLearning(null);
+//     setAiResponse('');
+//   };
+  
+//   // Function to send learning content to AI
+//   const sendToAI = async () => {
+//     if (!selectedLearning) return;
+    
+//     setAiLoading(true);
+//     setAiResponse('');
+    
+//     try {
+//       // Prepare the prompt for the AI with both text and image context
+//       let prompt = `Based on the following learning content, please provide a detailed explanation or deeper insights:\n\n"${selectedLearning.text}"`;
+      
+//       if (selectedLearning.imageUrl) {
+//         prompt += `\n\nThere is also an image associated with this learning. The image URL is: ${selectedLearning.imageUrl}`;
+//         prompt += `\n\nPlease consider both the text content and the visual information in the image when providing your insights.`;
+//       }
+      
+//       const response = await api.post('/ask-ai', {
+//         history: [
+//           { role: 'user', content: prompt }
+//         ]
+//       });
+      
+//       setAiResponse(response.data.reply);
+//     } catch (error) {
+//       console.error('Failed to get AI response:', error);
+//       setAiResponse('Sorry, I couldn\'t process that request. Please try again.');
+//     } finally {
+//       setAiLoading(false);
+//     }
+//   };
+  
+//   return (
+//     <div>
+//       <Header />
+//       <Link to="/"><Home /></Link>
+// <div className="learning-container">
+//   <h1>My Learnings</h1>
+  
+//   {/* Date filter */}
+//   <div className="date-filter">
+//     <label>Filter by date: </label>
+//     <DatePicker 
+//       selected={filterDate} 
+//       onChange={(date) => setFilterDate(date)} 
+//       placeholderText="Select a date to filter..."
+//     />
+//     {filterDate && (
+//       <button onClick={() => setFilterDate(null)}>Clear Filter</button>
+//     )}
+//   </div>
+
+//   <form onSubmit={handleSubmit} className="learning-form">
+//     <textarea
+//       value={text}
+//       onChange={(e) => setText(e.target.value)}
+//       placeholder="What did you learn today?"
+//       onInput={(e) => adjustTextareaHeight(e.target)}
+//     />
+//     <div className="form-row">
+//       <DatePicker selected={date} onChange={(d) => setDate(d)} />
+//       <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+//     </div>
+//     <button type="submit" disabled={loading}>
+//       {loading ? 'Saving...' : 'Add Learning'}
+//     </button>
+//   </form>
+
+//   <div className="learnings-list">
+//     {filteredLearnings.map((learning) => (
+//       <div 
+//         key={learning._id} 
+//         className="learning-item"
+//         onClick={() => openLearningModal(learning)} // Open modal on click
+//       >
+//         {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
+//         <div className="learning-content">
+//           <p>{learning.text}</p>
+//           <small>{new Date(learning.date).toLocaleDateString()}</small>
+//         </div>
+//       </div>
+//     ))}
+//   </div>
+// </div>
+
+// {/* Modal for detailed view */}
+// {selectedLearning && (
+//   <div className="modal-overlay" onClick={closeLearningModal}>
+//     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+//       <button className="modal-close" onClick={closeLearningModal}>×</button>
+//       <div className="modal-learning-item">
+//         {selectedLearning.imageUrl && (
+//           <img 
+//             src={selectedLearning.imageUrl} 
+//             alt="Learning visual" 
+//             className="modal-learning-image"
+//           />
+//         )}
+//         <div className="modal-learning-content">
+//           <p className="modal-learning-text">{selectedLearning.text}</p>
+//           <small className="modal-learning-date">
+//             {new Date(selectedLearning.date).toLocaleDateString()}
+//           </small>
+          
+//           {/* AI Section */}
+//           <div className="ai-section">
+//             <button 
+//               className="ai-button"
+//               onClick={sendToAI}
+//               disabled={aiLoading}
+//             >
+//               {aiLoading ? 'Learning Deep...' : 'Learn Deep'}
+//             </button>
+            
+//             {aiResponse && (
+//               <div className="ai-response">
+//                 <h3>Deep Insights:</h3>
+//                 <div className="ai-response-content">
+//                   <ReactMarkdown>{aiResponse}</ReactMarkdown>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// )}
+//     </div>
+//   );
+//  };
+
+// export default Learning;
+
+
 import React, { useState, useEffect } from 'react';
 import api from './api';
-import cloudinaryApi from './cloudinaryApi'; // Cloudinary API instance
+// We don't need cloudinaryApi anymore for uploads, we use standard fetch
 import Header from './Header';
 import Home from './Home';
 import { Link } from 'react-router-dom';
@@ -9,7 +257,7 @@ import 'react-datepicker/dist/react-datepicker.css'; // Styles for the calendar
 import './Learning.css';
 import ReactMarkdown from 'react-markdown';
 
- const Learning = () => {
+const Learning = () => {
   const [learnings, setLearnings] = useState([]);
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
@@ -21,8 +269,7 @@ import ReactMarkdown from 'react-markdown';
   const [aiLoading, setAiLoading] = useState(false); // For AI loading state
 
   // ---  CLOUDINARY DETAILS  ---
-  const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  // We will fetch these directly inside handleSubmit to ensure we get the latest values
 
   const fetchLearnings = async () => {
     try {
@@ -51,6 +298,7 @@ import ReactMarkdown from 'react-markdown';
     adjustTextareaHeight(textarea);
   }, [text]);
 
+  // --- UPDATED HANDLER (Fixes 400 Bad Request) ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
@@ -58,27 +306,43 @@ import ReactMarkdown from 'react-markdown';
 
     let imageUrl = '';
 
-    //  If an image is selected, upload it to Cloudinary first.
+    // 1. Upload to Cloudinary (Using standard fetch to avoid Axios header issues)
     if (image) {
       const formData = new FormData();
       formData.append('file', image);
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      
+      // CRITICAL FIX: Hardcode the correct preset name to match your Cloudinary settings
+      formData.append('upload_preset', 'inklane_uploads'); 
 
       try {
-        // Use the separate Cloudinary API instance without auth headers
-        const response = await cloudinaryApi.post(
-          `/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-          formData
-        );
-        imageUrl = response.data.secure_url; // Get the URL from Cloudinary
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dns1nyi2w'; // Fallback to your cloud name if env is missing
+        
+        // We use 'fetch' here because 'axios' often adds an Authorization header 
+        // that Cloudinary hates (causing the 400 error).
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Cloudinary Refusal Reason:", data);
+            alert(`Upload Failed: ${data.error?.message || "Unknown error"}`);
+            setLoading(false);
+            return;
+        }
+
+        imageUrl = data.secure_url;
       } catch (error) {
-        console.error("Image upload failed:", error);
+        console.error("Network Error during upload:", error);
+        alert("Network error while uploading image.");
         setLoading(false);
-        return; // Stop if the upload fails
+        return;
       }
     }
 
-    // Saving the learning to  backend with the Cloudinary URL.
+    // 2. Save to your Backend
     try {
       await api.post('/learnings', { text, imageUrl, date });
       // Reset form and refresh list
@@ -88,6 +352,7 @@ import ReactMarkdown from 'react-markdown';
       fetchLearnings();
     } catch (error) {
       console.error("Failed to save learning:", error);
+      alert("Failed to save learning to database.");
     }
     setLoading(false);
   };
@@ -147,100 +412,100 @@ import ReactMarkdown from 'react-markdown';
     <div>
       <Header />
       <Link to="/"><Home /></Link>
-<div className="learning-container">
-  <h1>My Learnings</h1>
-  
-  {/* Date filter */}
-  <div className="date-filter">
-    <label>Filter by date: </label>
-    <DatePicker 
-      selected={filterDate} 
-      onChange={(date) => setFilterDate(date)} 
-      placeholderText="Select a date to filter..."
-    />
-    {filterDate && (
-      <button onClick={() => setFilterDate(null)}>Clear Filter</button>
-    )}
-  </div>
+      <div className="learning-container">
+        <h1>My Learnings</h1>
+        
+        {/* Date filter */}
+        <div className="date-filter">
+          <label>Filter by date: </label>
+          <DatePicker 
+            selected={filterDate} 
+            onChange={(date) => setFilterDate(date)} 
+            placeholderText="Select a date to filter..."
+          />
+          {filterDate && (
+            <button onClick={() => setFilterDate(null)}>Clear Filter</button>
+          )}
+        </div>
 
-  <form onSubmit={handleSubmit} className="learning-form">
-    <textarea
-      value={text}
-      onChange={(e) => setText(e.target.value)}
-      placeholder="What did you learn today?"
-      onInput={(e) => adjustTextareaHeight(e.target)}
-    />
-    <div className="form-row">
-      <DatePicker selected={date} onChange={(d) => setDate(d)} />
-      <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-    </div>
-    <button type="submit" disabled={loading}>
-      {loading ? 'Saving...' : 'Add Learning'}
-    </button>
-  </form>
+        <form onSubmit={handleSubmit} className="learning-form">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="What did you learn today?"
+            onInput={(e) => adjustTextareaHeight(e.target)}
+          />
+          <div className="form-row">
+            <DatePicker selected={date} onChange={(d) => setDate(d)} />
+            <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+          </div>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Saving...' : 'Add Learning'}
+          </button>
+        </form>
 
-  <div className="learnings-list">
-    {filteredLearnings.map((learning) => (
-      <div 
-        key={learning._id} 
-        className="learning-item"
-        onClick={() => openLearningModal(learning)} // Open modal on click
-      >
-        {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
-        <div className="learning-content">
-          <p>{learning.text}</p>
-          <small>{new Date(learning.date).toLocaleDateString()}</small>
+        <div className="learnings-list">
+          {filteredLearnings.map((learning) => (
+            <div 
+              key={learning._id} 
+              className="learning-item"
+              onClick={() => openLearningModal(learning)} // Open modal on click
+            >
+              {learning.imageUrl && <img src={learning.imageUrl} alt="Learning visual" />}
+              <div className="learning-content">
+                <p>{learning.text}</p>
+                <small>{new Date(learning.date).toLocaleDateString()}</small>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
 
-{/* Modal for detailed view */}
-{selectedLearning && (
-  <div className="modal-overlay" onClick={closeLearningModal}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="modal-close" onClick={closeLearningModal}>×</button>
-      <div className="modal-learning-item">
-        {selectedLearning.imageUrl && (
-          <img 
-            src={selectedLearning.imageUrl} 
-            alt="Learning visual" 
-            className="modal-learning-image"
-          />
-        )}
-        <div className="modal-learning-content">
-          <p className="modal-learning-text">{selectedLearning.text}</p>
-          <small className="modal-learning-date">
-            {new Date(selectedLearning.date).toLocaleDateString()}
-          </small>
-          
-          {/* AI Section */}
-          <div className="ai-section">
-            <button 
-              className="ai-button"
-              onClick={sendToAI}
-              disabled={aiLoading}
-            >
-              {aiLoading ? 'Learning Deep...' : 'Learn Deep'}
-            </button>
-            
-            {aiResponse && (
-              <div className="ai-response">
-                <h3>Deep Insights:</h3>
-                <div className="ai-response-content">
-                  <ReactMarkdown>{aiResponse}</ReactMarkdown>
+      {/* Modal for detailed view */}
+      {selectedLearning && (
+        <div className="modal-overlay" onClick={closeLearningModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeLearningModal}>×</button>
+            <div className="modal-learning-item">
+              {selectedLearning.imageUrl && (
+                <img 
+                  src={selectedLearning.imageUrl} 
+                  alt="Learning visual" 
+                  className="modal-learning-image"
+                />
+              )}
+              <div className="modal-learning-content">
+                <p className="modal-learning-text">{selectedLearning.text}</p>
+                <small className="modal-learning-date">
+                  {new Date(selectedLearning.date).toLocaleDateString()}
+                </small>
+                
+                {/* AI Section */}
+                <div className="ai-section">
+                  <button 
+                    className="ai-button"
+                    onClick={sendToAI}
+                    disabled={aiLoading}
+                  >
+                    {aiLoading ? 'Learning Deep...' : 'Learn Deep'}
+                  </button>
+                  
+                  {aiResponse && (
+                    <div className="ai-response">
+                      <h3>Deep Insights:</h3>
+                      <div className="ai-response-content">
+                        <ReactMarkdown>{aiResponse}</ReactMarkdown>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
- };
+};
 
 export default Learning;
