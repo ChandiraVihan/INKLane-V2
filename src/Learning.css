@@ -419,3 +419,10 @@
     font-size: 1.1rem;
   }
 }
+
+
+.learning-content p, 
+.modal-learning-text {
+  white-space: pre-wrap;       /* Respects new lines (\n) */
+  word-wrap: break-word;       /* Prevents long words from overflowing */
+}
