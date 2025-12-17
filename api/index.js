@@ -228,7 +228,7 @@ app.delete('/api/todos/:id', authenticateToken, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: "Failed to delete todo." });
     }
-}
+});
 
 // 5. Start the Server
 // Vercel requires the app to be exported. 
